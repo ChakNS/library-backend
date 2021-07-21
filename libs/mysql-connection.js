@@ -1,7 +1,7 @@
 //加载mysql模块
 const mysql = require('mysql');
 //创建连接
-const DATA_BASE = 'test_data'
+const DATA_BASE = 'website_library'
 const connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',

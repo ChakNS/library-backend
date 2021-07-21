@@ -1,7 +1,7 @@
 const RouterHandle = require('../libs/router-handler');
 const router = new RouterHandle()
 const connection = require('../libs/mysql-connection')
-const TABLE_NAME = 'test_table'
+const TABLE_NAME = 'menus'
 //SQL语句
 const sql = `SELECT * FROM ${TABLE_NAME}`;
 const addSql = `INSERT INTO ${TABLE_NAME}(name,gender,age) VALUES(?,?,?)`;
