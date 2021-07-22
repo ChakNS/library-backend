@@ -1,5 +1,5 @@
 const mysql = require('../api/mysql')
-const RouterHandle = require('../libs/router-handler');
+const RouterHandle = require('../utils/router-handler');
 const router = new RouterHandle()
 
 router.$post('/', async function({ body }, res, next) {

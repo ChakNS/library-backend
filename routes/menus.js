@@ -1,36 +1,31 @@
-const RouterHandle = require('../libs/router-handler');
+const RouterHandle = require('../utils/router-handler');
 const router = new RouterHandle()
-const connection = require('../libs/mysql-connection')
+const mysql = require('../api/mysql')
 const arrayHandle = require('../utils/array')
-const TABLE_NAME = 'menus'
 //SQL语句
+const TABLE_NAME = 'menus'
 const sql = `SELECT * FROM ${TABLE_NAME}`;
-const addSql = `INSERT INTO ${TABLE_NAME}(title,name,path,icon,isDisplay,urlOrder,pId) VALUES(?,?,?,?,?,?,?)`;
-const deleteSql = `DELETE FROM ${TABLE_NAME} WHERE menuId=?`;
-
-const connect = (sql) => {
-  return new Promise((resolve, reject) => {
-    connection.query(sql, (err, result) => {
-      err && reject(err)
-      resolve(result)
-    })
-  })
-}
+const addSql = `INSERT INTO ${TABLE_NAME}(title,name,path,icon,isDisplay,urlOrder,pId) VALUES(%VALUES%)`;
+const deleteSql = `DELETE FROM ${TABLE_NAME} WHERE menuId=`;
 
 //增
 router.$post('/add', function ({ body }, res, next) {
   const { title, name, path, icon, isDisplay, urlOrder, pId = null } = body.payload
-  connection.query(addSql, [title, name, path, icon, isDisplay, urlOrder, pId], function (err, result) {
-    err && res.$err(err)
-    res.status(200).$success([])
-  });
+  mysql(addSql.replace('%VALUES%', `"${title}", "${name}", "${path}", "${icon}", "${isDisplay}", ${urlOrder}, ${pId}`)).then(result => {
+    res.status(200).$success('创建成功')
+  }).catch(err => {
+    console.log(err)
+    res.$err(err)
+  })
 })
 //删
 router.$post('/delete/:menuId', function ({ params }, res, next) {
-  connection.query(deleteSql, [params.menuId], function (err, result) {
-    err && res.$err(err)
+  mysql(deleteSql + params.menuId).then(result => {
     res.status(200).$success('删除成功')
-  });
+  }).catch(err => {
+    console.log(err)
+    res.$err(err)
+  })
 })
 //改
 router.$post('/update/:menuId', function ({ body, params }, res, next) {
@@ -42,26 +37,25 @@ router.$post('/update/:menuId', function ({ body, params }, res, next) {
   let updateSql = `UPDATE ${TABLE_NAME} SET `;
   const updateData = []
   if (name) {
-    updateSql += 'name=?,'
-    updateData.push(name)
+    updateSql += `name="${name}",`
   }
   if (path) {
-    updateSql += 'path=?,'
-    updateData.push(path)
+    updateSql += `path="${path}",`
   }
   updateSql=updateSql.substr(0, updateSql.length-1)
-  updateData.push(params.menuId)
-  updateSql += ' WHERE menuId=?'
-  connection.query(updateSql, updateData, function (err, result) {
-    err && res.$err(err)
+  updateSql += ` WHERE menuId=${menuId}`
+  mysql(updateSql).then(result => {
     res.status(200).$success('修改成功')
-  });
+  }).catch(err => {
+    res.$err(err)
+    console.log(err)
+  })
 })
 // 查
 router.$post('/list', function ({ body }, res, next) {
   const { menuId, isDisplay } = body.payload || {}
   if (!menuId && !isDisplay) {
-    connect(sql).then(result => {
+    mysql(sql).then(result => {
       res.status(200).$success(arrayHandle.parseToTree(result))
     }).catch(err => {
       res.$err(err)
@@ -75,9 +69,9 @@ router.$post('/list', function ({ body }, res, next) {
       targetSql += ` and isDisplay="${isDisplay}"`
     }
     // 三层目录
-    connect(targetSql).then(async result => {
+    mysql(targetSql).then(async result => {
       if (result.length > 1) {
-        Promise.all(result.filter(item => item.menuId !== menuId).map(item => connect(sql + ` WHERE pId=${item.menuId}`))).then(children => {
+        Promise.all(result.filter(item => item.menuId !== menuId).map(item => mysql(sql + ` WHERE pId=${item.menuId}`))).then(children => {
           res.status(200).$success(arrayHandle.parseToTree(children.reduce((pre, curr) => pre.concat(curr), result)))
         }).catch(err => {
           res.$err(err)
@@ -87,8 +81,9 @@ router.$post('/list', function ({ body }, res, next) {
       }
     }).catch(err => {
       res.$err(err)
+      console.log(err)
     })
   }
 });
 
-module.exports = router.router;
+module.exports = router.router

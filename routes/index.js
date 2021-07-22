@@ -1,4 +1,4 @@
-const RouterHandle = require('../libs/router-handler');
+const RouterHandle = require('../utils/router-handler');
 const router = new RouterHandle()
 const path = require('path')
 
