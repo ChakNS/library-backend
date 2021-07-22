@@ -1,10 +1,14 @@
-// const express = require('express');
+const mysql = require('../api/mysql')
 const RouterHandle = require('../libs/router-handler');
-// const path = require('path')
 const router = new RouterHandle()
-/* GET home page. */
-router.$post('/', function({ body }, res, next) {
-  res.status(200).send('product1111');
+
+router.$post('/', async function({ body }, res, next) {
+  mysql('SELECT * FROM menus').then((result) => {
+    res.status(200).send(result);
+  })
+  .catch(err => {
+    console.log(err)
+  });
 });
 
 module.exports = router.router;

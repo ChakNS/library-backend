@@ -4,6 +4,8 @@ var cors = require('cors');
 var path = require('path');
 var cookieParser = require('cookie-parser'); //这就是一个解析Cookie的工具。通过req.cookies可以取到传过来的cookie，并把它们转成对象。
 var logger = require('morgan'); //在控制台中，显示req请求的信息
+const ENV_CONFIG = require(`./config/${process.env.NODE_ENV}.config`)
+Object.assign(process.env, ENV_CONFIG)
 
 // 路由信息（接口地址），存放在routes的根目录
 var indexRouter = require('./routes/index');
