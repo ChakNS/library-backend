@@ -10,4 +10,4 @@ RUN npm install --only=production
 # 将本地代码复制到工作目录内
 COPY . ./
 # 启动服务
-CMD [ "node", "./www.js" ]
+CMD [ "npm", "run", "start:prod" ]

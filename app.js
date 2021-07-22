@@ -9,10 +9,10 @@ Object.assign(process.env, ENV_CONFIG)
 
 // 路由信息（接口地址），存放在routes的根目录
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var memberRouter = require('./routes/member');
+// var usersRouter = require('./routes/users');
+// var memberRouter = require('./routes/member');
 var productRouter = require('./routes/product');
-var menusRouter = require('./routes/menus');
+// var menusRouter = require('./routes/menus');
 
 var app = express();
 
@@ -30,10 +30,10 @@ app.use(cors())
 
 //配置路由模块
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/member', memberRouter);
+// app.use('/users', usersRouter);
+// app.use('/member', memberRouter);
 app.use('/product', productRouter);
-app.use('/menus', menusRouter);
+// app.use('/menus', menusRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
