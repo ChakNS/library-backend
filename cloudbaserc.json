@@ -5,11 +5,9 @@
   "functionRoot": "./functions",
   "functions": [
     {
-      "name": "node-app",
+      "name": "tcb-mysql-ext",
       "timeout": 5,
       "envVariables": {},
-      "runtime": "Nodejs10.15",
-      "memorySize": 128,
       "handler": "index.main"
     }
   ],
