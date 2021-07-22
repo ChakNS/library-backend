@@ -1,3 +1,4 @@
+console.log('begin....')
 const mysql = require('../api/mysql')
 const RouterHandle = require('../utils/router-handler');
 const router = new RouterHandle()
